@@ -35,11 +35,8 @@ __device__ void calculate_pulse_gauss_decay (               // ... = function na
     
     // value
 
-<<<<<<< Updated upstream
     REAL argx = 0;
-=======
-    REAL const argx = 0;
->>>>>>> Stashed changes
+
     if (x < p[1])
     {
         argx = (x - p[1]) * (x - p[1]) / (2 * p[2] * p[2]);
@@ -69,8 +66,4 @@ __device__ void calculate_pulse_gauss_decay (               // ... = function na
         current_derivative[3 * n_points]  = p[0] * ex * (x - p[1]) / (p[3] * p[3]);
     }
     
-<<<<<<< Updated upstream
 }
-=======
-}
->>>>>>> Stashed changes
