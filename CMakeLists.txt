@@ -142,6 +142,8 @@ add_subdirectory( Gpufit )
 
 # Examples using Gpufit and Cpufit
 
+add_subdirectory( Interfaces )
+
 add_subdirectory( examples )
 
 # Launcher
