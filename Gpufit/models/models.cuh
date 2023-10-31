@@ -16,6 +16,7 @@
 #include "spline_3d_multichannel.cuh"
 #include "spline_3d_phase_multichannel.cuh"
 #include "pulse_gauss_decay.cuh"
+#include "pulse_erf_decay.cuh"
 
 __device__ void calculate_model(
     ModelID const model_id,
@@ -74,6 +75,9 @@ __device__ void calculate_model(
     case PULSE_GAUSS_DECAY:
         calculate_pulse_gauss_decay(parameters, n_fits, n_points, value, derivative, point_index, fit_index, chunk_index, user_info, user_info_size);
         break;
+    case PULSE_ERF_DECAY:
+        calculate_pulse_gauss_decay(parameters, n_fits, n_points, value, derivative, point_index, fit_index, chunk_index, user_info, user_info_size);
+        break;
     default:
         assert(0); // unknown model ID
     }
@@ -97,6 +101,7 @@ void configure_model(ModelID const model_id, int & n_parameters, int & n_dimensi
     case SPLINE_3D_MULTICHANNEL:         n_parameters = 5; n_dimensions = 4; break;
     case SPLINE_3D_PHASE_MULTICHANNEL:   n_parameters = 6; n_dimensions = 4; break;
     case PULSE_GAUSS_DECAY:     n_parameters = 5; n_dimensions = 1; break;
+    case PULSE_ERF_DECAY:     n_parameters = 5; n_dimensions = 1; break;
     default: throw std::runtime_error("unknown model ID");
     }
 }
