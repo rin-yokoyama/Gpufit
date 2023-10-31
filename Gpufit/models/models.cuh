@@ -76,7 +76,7 @@ __device__ void calculate_model(
         calculate_pulse_gauss_decay(parameters, n_fits, n_points, value, derivative, point_index, fit_index, chunk_index, user_info, user_info_size);
         break;
     case PULSE_ERF_DECAY:
-        calculate_pulse_gauss_decay(parameters, n_fits, n_points, value, derivative, point_index, fit_index, chunk_index, user_info, user_info_size);
+        calculate_pulse_erf_decay(parameters, n_fits, n_points, value, derivative, point_index, fit_index, chunk_index, user_info, user_info_size);
         break;
     default:
         assert(0); // unknown model ID

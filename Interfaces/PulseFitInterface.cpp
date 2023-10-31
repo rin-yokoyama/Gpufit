@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2023
  *
  */
-#include "PulseFitInterface.hpp"
+#include "Interfaces/PulseFitInterface.hpp"
 
 PulseFitInterface::PulseFitInterface(int nfits, int npoints, int polarity) : n_fits_(nfits),
                                                                              n_points_(npoints),
