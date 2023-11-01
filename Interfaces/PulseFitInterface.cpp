@@ -13,8 +13,8 @@
 PulseFitInterface::PulseFitInterface(int nfits, int npoints, int polarity) : n_fits_(nfits),
                                                                              n_points_(npoints),
                                                                              polarity_(polarity),
-                                                                             data_(n_fits_, n_points_),
-                                                                             initial_parameters_(n_fits_, n_parameters_),
+                                                                             data_(n_fits_ * n_points_),
+                                                                             initial_parameters_(n_fits_ * n_parameters_),
                                                                              parameters_to_fit_(n_parameters_, 1),
                                                                              output_parameters_(n_fits_ * n_parameters_),
                                                                              output_states_(n_fits_),
@@ -23,6 +23,8 @@ PulseFitInterface::PulseFitInterface(int nfits, int npoints, int polarity) : n_f
 {
     if (n_points_ < 10)
         std::cout << "[PulseFitInterface]: n_points_ has to be grater than 10!" << std::endl;
+    tolerance_ = 0.0001;
+    max_n_iterations_ = 20;
     prepulse_range_ = 10;
     initial_peak_time_ = -1;
     initial_rise_time_ = 1;
@@ -44,6 +46,8 @@ int PulseFitInterface::AddPulse(const std::vector<float> &pulse)
 
 int PulseFitInterface::CallCpufit()
 {
+    if (!n_added_)
+        return 0;
     const int status = cpufit(
         n_added_,
         n_points_,
@@ -71,6 +75,8 @@ int PulseFitInterface::CallCpufit()
 
 int PulseFitInterface::CallGpufit()
 {
+    if (!n_added_)
+        return 0;
     const int status = gpufit(
         n_added_,
         n_points_,
@@ -116,20 +122,23 @@ void PulseFitInterface::CalculateInitialParameters(const std::vector<float> &pul
     {
         itr = std::min_element(pulse.begin(), pulse.end());
     }
-    initial_parameters_[n_added_ + 0] = *itr - baseline;
+    initial_parameters_[n_parameters_ * n_added_ + 0] = *itr - baseline;
     if (initial_peak_time_ < 0)
-        initial_parameters_[n_added_ + 1] = std::distance(pulse.begin(), itr);
+        initial_parameters_[n_parameters_ * n_added_ + 1] = std::distance(pulse.begin(), itr);
     else
-        initial_parameters_[n_added_ + 1] = initial_peak_time_;
-    initial_parameters_[n_added_ + 2] = initial_rise_time_;
-    initial_parameters_[n_added_ + 3] = initial_decay_time_;
-    initial_parameters_[n_added_ + 4] = baseline;
+        initial_parameters_[n_parameters_ * n_added_ + 1] = initial_peak_time_;
+    initial_parameters_[n_parameters_ * n_added_ + 2] = initial_rise_time_;
+    initial_parameters_[n_parameters_ * n_added_ + 3] = initial_decay_time_;
+    initial_parameters_[n_parameters_ * n_added_ + 4] = baseline;
 }
 
 const int PulseFitInterface::ReadResults(int &index, std::vector<float> &parameters, int &states, float &chi_square, int &n_iterations)
 {
     if (n_added_ <= n_read_)
+    {
+        Clear();
         return 1;
+    }
     index = n_read_;
     parameters.resize(n_parameters_);
     for (int i = 0; i < n_parameters_; ++i)
