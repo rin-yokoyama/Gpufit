@@ -24,7 +24,7 @@ PulseFitInterface::PulseFitInterface(int nfits, int npoints, int polarity) : n_f
     if (n_points_ < 10)
         std::cout << "[PulseFitInterface]: n_points_ has to be grater than 10!" << std::endl;
     tolerance_ = 0.0001;
-    max_n_iterations_ = 20;
+    max_n_iterations_ = 40;
     prepulse_range_ = 10;
     initial_peak_time_ = -1;
     initial_rise_time_ = 1;

@@ -56,7 +56,7 @@ public:
 protected:
     static const int n_parameters_ = 5;
     static const int model_id_ = PULSE_ERF_DECAY;
-    static const int estimator_id_ = LSE;
+    static const int estimator_id_ = MLE; // LSE;
 
     const int n_fits_;
     const int n_points_;

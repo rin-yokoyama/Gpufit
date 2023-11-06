@@ -16,14 +16,14 @@
 #include <math.h>
 
 #ifdef USE_CUBLAS
-#define PRINT_IF_USE_CUBLAS() \
-        std::cout << "CUBLAS enabled: Yes" << std::endl << std::endl
+#define PRINT_IF_USE_CUBLAS()                       \
+    std::cout << "CUBLAS enabled: Yes" << std::endl \
+              << std::endl
 #else
-#define PRINT_IF_USE_CUBLAS() \
-        std::cout << "CUBLAS enabled: No" << std::endl << std::endl
+#define PRINT_IF_USE_CUBLAS()                      \
+    std::cout << "CUBLAS enabled: No" << std::endl \
+              << std::endl
 #endif // USE_CUBLAS
-
-
 
 /*
     Names of parameters for the pulse fit model
@@ -40,9 +40,9 @@ struct Parameters
 /*
     Randomize parameters, slightly differently
 */
-void generate_initial_parameters(std::vector<REAL> & parameters_set, std::vector<Parameters> const & parameters)
+void generate_initial_parameters(std::vector<REAL> &parameters_set, std::vector<Parameters> const &parameters)
 {
-    std::uniform_real_distribution< REAL> uniform_dist(0, 1);
+    std::uniform_real_distribution<REAL> uniform_dist(0, 1);
 
     REAL const a = 0.0f;
     REAL const b = 0.2f;
@@ -61,11 +61,11 @@ void generate_initial_parameters(std::vector<REAL> & parameters_set, std::vector
 /*
     Randomize parameters
 */
-void generate_test_parameters(std::vector<Parameters> & target,    Parameters const source)
+void generate_test_parameters(std::vector<Parameters> &target, Parameters const source)
 {
     std::size_t const n_fits = target.size();
 
-    std::uniform_real_distribution< REAL> uniform_dist(0, 1);
+    std::uniform_real_distribution<REAL> uniform_dist(0, 1);
 
     REAL const a = 0.9f;
     REAL const b = 0.2f;
@@ -107,7 +107,7 @@ void generate_test_parameters(std::vector<Parameters> & target,    Parameters co
 /*
 
 */
-void add_gauss_noise(std::vector<REAL> & vec, Parameters const & parameters, REAL const snr)
+void add_gauss_noise(std::vector<REAL> &vec, Parameters const &parameters, REAL const snr)
 {
     REAL const std_dev = parameters.amplitude * 0.05f;
 
@@ -149,8 +149,8 @@ void add_gauss_noise(std::vector<REAL> & vec, Parameters const & parameters, REA
 void generate_gauss2d(
     std::size_t const n_fits,
     std::size_t const n_points,
-    std::vector<REAL> & data,
-    std::vector<Parameters> const & parameters)
+    std::vector<REAL> &data,
+    std::vector<Parameters> const &parameters)
 {
     int const text_width = 30;
     int const progress_width = 25;
@@ -181,11 +181,11 @@ void generate_gauss2d(
             REAL argx = 0;
             if (ix < x0)
             {
-                argx = exp(-0.5f * ((ix - x0) / rise) * ((ix - x0) / rise)); 
+                argx = exp(-0.5f * ((ix - x0) / rise) * ((ix - x0) / rise));
             }
             else
             {
-                argx = exp(-(ix - x0)/decay);
+                argx = exp(-(ix - x0) / decay);
             }
 
             data[absolute_index] = amplitude * argx + baseline;
@@ -210,26 +210,26 @@ Runs Gpufit vs. Cpufit for various number of fits and compares the speed
 
 No weights, Model: Gauss_2D, Estimator: LSE
 */
-int main(int argc, char * argv[])
+int main(int argc, char *argv[])
 {
-    // title 
+    // title
     std::cout << "----------------------------------------" << std::endl;
     std::cout << "Performance comparison Gpufit vs. Cpufit" << std::endl;
-    std::cout << "----------------------------------------" << std::endl << std::endl;
+    std::cout << "----------------------------------------" << std::endl
+              << std::endl;
 
     std::cout << "Please note that execution speed test results depend on" << std::endl;
     std::cout << "the details of the CPU and GPU hardware." << std::endl;
     std::cout << std::endl;
 
-
     // check for CUDA availability
-	bool const cuda_available = gpufit_cuda_available() != 0;
-	if (!gpufit_cuda_available())
-	{
-		std::cout << "CUDA not available" << std::endl;
-	}
+    bool const cuda_available = gpufit_cuda_available() != 0;
+    if (!gpufit_cuda_available())
+    {
+        std::cout << "CUDA not available" << std::endl;
+    }
 
-	// check for CUDA runtime and driver
+    // check for CUDA runtime and driver
     int cuda_runtime_version = 0;
     int cuda_driver_version = 0;
     bool const version_available = gpufit_get_cuda_version(&cuda_runtime_version, &cuda_driver_version) == ReturnState::OK;
@@ -250,9 +250,7 @@ int main(int argc, char * argv[])
         bool const cuda_available = cuda_driver_version > 0;
         if (cuda_available)
         {
-            bool const version_compatible
-                = cuda_driver_version >= cuda_runtime_version
-                && cuda_runtime_version > 0;
+            bool const version_compatible = cuda_driver_version >= cuda_runtime_version && cuda_runtime_version > 0;
             if (version_compatible)
             {
                 do_gpufits = true;
@@ -280,7 +278,8 @@ int main(int argc, char * argv[])
     }
     if (!do_gpufits)
     {
-        std::cout << "Skipping Gpufit computations." << std::endl << std::endl;
+        std::cout << "Skipping Gpufit computations." << std::endl
+                  << std::endl;
     }
     else
     {
@@ -289,13 +288,13 @@ int main(int argc, char * argv[])
 
     // all numbers of fits
     std::vector<std::size_t> n_fits_all;
-    if (sizeof(void*) < 8)
+    if (sizeof(void *) < 8)
     {
-        n_fits_all = { 10, 100, 1000, 10000, 100000, 1000000};
+        n_fits_all = {10, 100, 1000};
     }
     else
     {
-        n_fits_all = { 10, 100, 1000, 10000, 100000, 1000000, 10000000 };
+        n_fits_all = {10, 100, 1000, 10000, 100000};
     }
 
     std::size_t const max_n_fits = n_fits_all.back();
@@ -330,7 +329,8 @@ int main(int argc, char * argv[])
     generate_initial_parameters(initial_parameters, test_parameters);
 
     // print collumn identifiers
-    std::cout << std::endl << std::right;
+    std::cout << std::endl
+              << std::right;
     std::cout << std::setw(8) << "Number" << std::setw(3) << "|";
     std::cout << std::setw(13) << "Cpufit speed" << std::setw(3) << "|";
     std::cout << std::setw(13) << "Gpufit speed" << std::setw(3) << "|";
@@ -359,26 +359,23 @@ int main(int argc, char * argv[])
 
         // run Cpufit and measure time
         std::chrono::high_resolution_clock::time_point t0 = std::chrono::high_resolution_clock::now();
-        int const cpu_status
-            = cpufit
-            (
-                n_fits,
-                n_points,
-                data.data(),
-                0,
-                PULSE_GAUSS_DECAY,
-                initial_parameters.data(),
-                tolerance,
-                max_n_iterations,
-                parameters_to_fit.data(),
-                LSE,
-                0,
-                0,
-                cpufit_parameters.data(),
-                cpufit_states.data(),
-                cpufit_chi_squares.data(),
-                cpufit_n_iterations.data()
-            );
+        int const cpu_status = cpufit(
+            n_fits,
+            n_points,
+            data.data(),
+            0,
+            PULSE_GAUSS_DECAY,
+            initial_parameters.data(),
+            tolerance,
+            max_n_iterations,
+            parameters_to_fit.data(),
+            LSE,
+            0,
+            0,
+            cpufit_parameters.data(),
+            cpufit_states.data(),
+            cpufit_chi_squares.data(),
+            cpufit_n_iterations.data());
         std::chrono::milliseconds::rep const dt_cpufit = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - t0).count();
 
         if (cpu_status != 0)
@@ -400,9 +397,7 @@ int main(int argc, char * argv[])
 
             // run Gpufit and measure time
             t0 = std::chrono::high_resolution_clock::now();
-            int const gpu_status
-                = gpufit
-                (
+            int const gpu_status = gpufit(
                 n_fits,
                 n_points,
                 data.data(),
@@ -418,8 +413,7 @@ int main(int argc, char * argv[])
                 gpufit_parameters.data(),
                 gpufit_states.data(),
                 gpufit_chi_squares.data(),
-                gpufit_n_iterations.data()
-                );
+                gpufit_n_iterations.data());
             dt_gpufit = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - t0).count();
 
             if (gpu_status != 0)
@@ -434,7 +428,7 @@ int main(int argc, char * argv[])
         std::cout << std::fixed << std::setprecision(0);
         if (dt_cpufit)
         {
-            std::cout << std::setw(13) << static_cast<double>(n_fits) / static_cast<double>(dt_cpufit)* 1000.0 << std::setw(3) << "|";
+            std::cout << std::setw(13) << static_cast<double>(n_fits) / static_cast<double>(dt_cpufit) * 1000.0 << std::setw(3) << "|";
         }
         else
         {
@@ -442,7 +436,7 @@ int main(int argc, char * argv[])
         }
         if (dt_gpufit)
         {
-            std::cout << std::setw(13) << static_cast<double>(n_fits) / static_cast<double>(dt_gpufit)* 1000.0 << std::setw(3) << "|";
+            std::cout << std::setw(13) << static_cast<double>(n_fits) / static_cast<double>(dt_gpufit) * 1000.0 << std::setw(3) << "|";
             std::cout << std::fixed << std::setprecision(2);
             std::cout << std::setw(12) << static_cast<double>(dt_cpufit) / static_cast<double>(dt_gpufit);
         }
@@ -456,10 +450,11 @@ int main(int argc, char * argv[])
             std::cout << std::setw(13) << "inf" << std::setw(3) << "|";
             std::cout << std::setw(12) << "inf";
         }
-        
-        std::cout << std::endl;        
+
+        std::cout << std::endl;
     }
-    std::cout << std::endl << "Test completed!" << std::endl;
+    std::cout << std::endl
+              << "Test completed!" << std::endl;
     std::cout << "Press ENTER to exit" << std::endl;
     std::getchar();
 
