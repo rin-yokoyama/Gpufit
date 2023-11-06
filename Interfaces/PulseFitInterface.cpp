@@ -24,7 +24,7 @@ PulseFitInterface::PulseFitInterface(int nfits, int npoints, int polarity) : n_f
     if (n_points_ < 10)
         std::cout << "[PulseFitInterface]: n_points_ has to be grater than 10!" << std::endl;
     tolerance_ = 0.0001;
-    max_n_iterations_ = 40;
+    max_n_iterations_ = 20;
     prepulse_range_ = 10;
     initial_peak_time_ = -1;
     initial_rise_time_ = 1;
@@ -38,7 +38,7 @@ int PulseFitInterface::AddPulse(const std::vector<float> &pulse)
         return 1;
     }
 
-    std::memcpy(data_.data() + n_added_, pulse.data(), n_points_ * sizeof(float));
+    std::memcpy(&data_[n_added_ * n_points_], pulse.data(), n_points_ * sizeof(float));
     CalculateInitialParameters(pulse);
     ++n_added_;
     return 0;
