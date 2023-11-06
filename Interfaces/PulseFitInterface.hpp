@@ -51,7 +51,7 @@ public:
     }
 
     const int GetNAdded() const { return n_added_; }
-    const int ReadResults(int &index, std::vector<float> &parameters, int &states, float &chi_square, int &n_iterations);
+    const int ReadResults(int &index, std::vector<float> &parameters, std::vector<float> &init_params, int &states, float &chi_square, int &n_iterations);
 
 protected:
     static const int n_parameters_ = 5;

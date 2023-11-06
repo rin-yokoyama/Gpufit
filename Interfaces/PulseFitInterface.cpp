@@ -132,7 +132,7 @@ void PulseFitInterface::CalculateInitialParameters(const std::vector<float> &pul
     initial_parameters_[n_parameters_ * n_added_ + 4] = baseline;
 }
 
-const int PulseFitInterface::ReadResults(int &index, std::vector<float> &parameters, int &states, float &chi_square, int &n_iterations)
+const int PulseFitInterface::ReadResults(int &index, std::vector<float> &parameters, std::vector<float> &init_params, int &states, float &chi_square, int &n_iterations)
 {
     if (n_added_ <= n_read_)
     {
@@ -141,9 +141,11 @@ const int PulseFitInterface::ReadResults(int &index, std::vector<float> &paramet
     }
     index = n_read_;
     parameters.resize(n_parameters_);
+    init_params.resize(n_parameters_);
     for (int i = 0; i < n_parameters_; ++i)
     {
         parameters[i] = output_parameters_[n_parameters_ * n_read_ + i];
+        init_params[i] = initial_parameters_[n_parameters_ * n_read_ + i];
     }
     states = output_states_[index];
     chi_square = output_chi_squares_[index];
