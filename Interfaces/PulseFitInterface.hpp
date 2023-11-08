@@ -8,6 +8,10 @@
  * @copyright Copyright (c) 2023
  *
  */
+
+#ifndef __PULSE_FIT_INTERFACE__
+#define __PULSE_FIT_INTERFACE__
+
 #include "Gpufit/constants.h"
 #include "Gpufit/gpufit.h"
 #include "Cpufit/cpufit.h"
@@ -86,3 +90,5 @@ protected:
 };
 
 int PulseFitInterface::static_id_ = 0;
+
+#endif /**__PULSE_FIT_INTERFACE__**/
