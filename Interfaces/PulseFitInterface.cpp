@@ -21,6 +21,7 @@ PulseFitInterface::PulseFitInterface(int nfits, int npoints, int polarity) : n_f
                                                                              output_chi_squares_(n_fits_),
                                                                              output_n_iterations_(n_fits_)
 {
+    instance_id_ = static_id_++;
     if (n_points_ < 10)
         std::cout << "[PulseFitInterface]: n_points_ has to be grater than 10!" << std::endl;
     tolerance_ = 0.0001;
@@ -100,6 +101,20 @@ int PulseFitInterface::CallGpufit()
         std::cout << "[PulseFitInterface]: Error in gpufit: " << gpufit_get_last_error() << std::endl;
     }
     return status;
+}
+
+void PulseFitInterface::PoolFit()
+{
+    std::cout << "PulseFitInterface[" << instance_id_ << "]: submitting Fit to Queue" << std::endl;
+    std::future<PulseFitInterface*> result = FitThreadPool::GetInstance().enqueue([](PulseFitInterface *interface){
+        if (FitThreadPool::GetInstance().threadToIfgpu[std::this_thread::get_id()])
+            interface->CallGpufit();
+        else
+            interface->CallCpufit();
+        return interface;
+    }, this);
+    auto ptr = result.get();
+    std::cout << "PulseFitInterface[" << instance_id_ << "]: Fit done." << std::endl;
 }
 
 void PulseFitInterface::Clear()

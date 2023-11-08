@@ -11,6 +11,7 @@
 #include "Gpufit/constants.h"
 #include "Gpufit/gpufit.h"
 #include "Cpufit/cpufit.h"
+#include "FitThreadPool.hpp"
 #include <iostream>
 #include <cstring>
 #include <vector>
@@ -26,6 +27,7 @@ public:
     int AddPulse(const std::vector<float> &pulse);
     int CallCpufit();
     int CallGpufit();
+    void PoolFit();
     void Clear();
     void SetParametersToFit(const std::vector<int> flags) { parameters_to_fit_ = flags; }
     void SetPrepulseRange(const float &range)
@@ -57,7 +59,9 @@ protected:
     static const int n_parameters_ = 5;
     static const int model_id_ = PULSE_ERF_DECAY;
     static const int estimator_id_ = MLE; // LSE;
+    static int static_id_;
 
+    int instance_id_;
     const int n_fits_;
     const int n_points_;
     const int polarity_;
@@ -80,3 +84,5 @@ protected:
 
     void CalculateInitialParameters(const std::vector<float> &pulse);
 };
+
+int PulseFitInterface::static_id_ = 0;
