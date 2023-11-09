@@ -41,7 +41,14 @@ int PulseFitInterface::AddPulse(const std::vector<float> &pulse)
         return 1;
     }
 
-    std::memcpy(&data_[n_added_ * n_points_], pulse.data(), n_points_ * sizeof(float));
+    if (fit_range_.empty())
+    {
+        std::memcpy(&data_[n_added_ * n_points_], pulse.data(), n_points_ * sizeof(float));
+    }
+    else
+    {
+        std::memcpy(&data_[n_added_ * n_points_], pulse.data()+fit_range_[0], n_points_ * sizeof(float));
+    }
     CalculateInitialParameters(pulse);
     ++n_added_;
     return 0;
@@ -143,9 +150,17 @@ void PulseFitInterface::CalculateInitialParameters(const std::vector<float> &pul
     }
     initial_parameters_[n_parameters_ * n_added_ + 0] = *itr - baseline;
     if (initial_peak_time_ < 0)
+    {
         initial_parameters_[n_parameters_ * n_added_ + 1] = std::distance(pulse.begin(), itr);
+        if (!fit_range_.empty())
+        {
+            initial_parameters_[n_parameters_ * n_added_ + 1] -= fit_range_[0];
+        }
+    }
     else
+    {
         initial_parameters_[n_parameters_ * n_added_ + 1] = initial_peak_time_;
+    }
     initial_parameters_[n_parameters_ * n_added_ + 2] = initial_rise_time_;
     initial_parameters_[n_parameters_ * n_added_ + 3] = initial_decay_time_;
     initial_parameters_[n_parameters_ * n_added_ + 4] = baseline;
@@ -171,4 +186,20 @@ const int PulseFitInterface::ReadResults(int &index, std::vector<float> &paramet
     n_iterations = output_n_iterations_[index];
     ++n_read_;
     return 0;
+}
+
+void PulseFitInterface::SetFitRange(const std::vector<int> &range)
+{
+    if (range.size() != 2)
+    {
+        std::cout << "PulseFitInterface::SetFitRange(): Invalid range input" << std::endl;
+        return;
+    }
+    if (range[1]<range[0])
+    {
+        std::cout << "PulseFitInterface::SetFitRange(): range[0] is grater than range[1]" << std::endl;
+        return;
+    }
+    fit_range_ = range;
+    n_points_ = fit_range_[1] - fit_range_[0];
 }

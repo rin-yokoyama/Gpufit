@@ -34,6 +34,7 @@ public:
     void PoolFit();
     void Clear();
     void SetParametersToFit(const std::vector<int> flags) { parameters_to_fit_ = flags; }
+    void SetFitRange(const std::vector<int> &range);
     void SetPrepulseRange(const float &range)
     {
         if (range > n_points_)
@@ -67,7 +68,7 @@ protected:
 
     int instance_id_;
     const int n_fits_;
-    const int n_points_;
+    int n_points_;
     const int polarity_;
     int n_added_ = 0;
     int n_read_ = 0;
@@ -80,6 +81,7 @@ protected:
     std::vector<int> output_states_;
     std::vector<float> output_chi_squares_;
     std::vector<int> output_n_iterations_;
+    std::vector<int> fit_range_;
 
     float prepulse_range_;
     float initial_peak_time_;
