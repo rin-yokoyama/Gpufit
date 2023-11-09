@@ -118,6 +118,9 @@ void FitInterface::set_number_of_parameters(ModelID const model_id)
     case PULSE_ERF_DECAY:
         n_parameters_ = 5;
         break;
+    case SIN_PLUS_LINE:
+        n_parameters_ = 5;
+        break;
     default:
         throw std::runtime_error("unknown model ID");
     }
