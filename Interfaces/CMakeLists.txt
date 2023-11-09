@@ -6,6 +6,7 @@ if( USE_CUBLAS )
 endif()
 
 add_library( GpufitInterface SHARED
+    PoolFitInterface.cpp
     FitThreadPool.cpp
     PulseFitInterface.cpp
     ${PROJECT_SOURCE_DIR}/tests/utils.h
