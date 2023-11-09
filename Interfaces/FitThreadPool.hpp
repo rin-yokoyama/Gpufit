@@ -14,9 +14,10 @@
 class FitThreadPool
 {
 private:
-    FitThreadPool(int n_threads, int n_gpu=1);
-    virtual ~FitThreadPool() = default;
-
+    FitThreadPool(int n_threads, int n_gpu);
+    
+    virtual ~FitThreadPool();
+    
     static FitThreadPool *instance;
 
 public:
@@ -27,13 +28,19 @@ public:
     FitThreadPool &operator=(FitThreadPool &&) = delete;
 
     static FitThreadPool &GetInstance(){return *instance;}
-    static void Create(int n_threads)
+
+    static void Create(int n_threads, int n_gpu)
     {
+        if(n_threads < n_gpu)
+        {
+            std::cout << "[FitThreadPool]: n_gpu has to be smaller than or equal to n_threads" << std::endl;
+        }
         if(!instance)
         {
-            instance = new FitThreadPool(n_threads);
+            instance = new FitThreadPool(n_threads, n_gpu);
         }
     }
+
     static void Destroy()
     {
         if(instance)

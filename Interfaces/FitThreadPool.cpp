@@ -1,5 +1,7 @@
 #include "FitThreadPool.hpp"
 
+FitThreadPool* FitThreadPool::instance = nullptr;
+
 FitThreadPool::FitThreadPool(int n_threads, int n_gpu) : stop(false)
 {
     for (int i = 0; i < n_threads; ++i)

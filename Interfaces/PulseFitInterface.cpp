@@ -10,6 +10,8 @@
  */
 #include "Interfaces/PulseFitInterface.hpp"
 
+int PulseFitInterface::static_id_ = 0;
+
 PulseFitInterface::PulseFitInterface(int nfits, int npoints, int polarity) : n_fits_(nfits),
                                                                              n_points_(npoints),
                                                                              polarity_(polarity),
@@ -107,7 +109,9 @@ void PulseFitInterface::PoolFit()
 {
     std::cout << "PulseFitInterface[" << instance_id_ << "]: submitting Fit to Queue" << std::endl;
     std::future<PulseFitInterface*> result = FitThreadPool::GetInstance().enqueue([](PulseFitInterface *interface){
-        if (FitThreadPool::GetInstance().threadToIfgpu[std::this_thread::get_id()])
+        auto if_gpu = FitThreadPool::GetInstance().threadToIfgpu[std::this_thread::get_id()];
+        std::cout << "if_gpu " << if_gpu << std::endl;
+        if (if_gpu)
             interface->CallGpufit();
         else
             interface->CallCpufit();

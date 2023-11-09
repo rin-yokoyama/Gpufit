@@ -89,6 +89,5 @@ protected:
     void CalculateInitialParameters(const std::vector<float> &pulse);
 };
 
-int PulseFitInterface::static_id_ = 0;
 
 #endif /**__PULSE_FIT_INTERFACE__**/
