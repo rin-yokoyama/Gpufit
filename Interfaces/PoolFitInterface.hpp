@@ -40,13 +40,9 @@ public:
     const int GetNAdded() const { return n_added_; }
     const int ReadResults(int &index, std::vector<float> &parameters, std::vector<float> &init_params, int &states, float &chi_square, int &n_iterations);
     const float* GetDataPtr() const { return data_.data();}
-    void SetInitialParameters(int i, const std::vector<float> &params)
+    void SetInitialParameter(int i_fit, int i_par, const float &param)
     { 
-        int index = 0;
-        for(const auto &param: params)
-        {
-            initial_parameters_[i+(index++)] = param;
-        }
+        initial_parameters_[i_par+i_fit*n_parameters_] = param;
     }
     const int GetNParameters() const {return n_parameters_;}
 

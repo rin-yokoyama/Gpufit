@@ -16,7 +16,7 @@ PoolFitInterface::PoolFitInterface(int nfits, int npoints, int n_parameters, int
     if (n_points_ < 10)
         std::cout << "[PoolFitInterface]: n_points_ has to be grater than 10!" << std::endl;
     tolerance_ = 0.0001;
-    max_n_iterations_ = 20;
+    max_n_iterations_ = 50;
 }
 
 int PoolFitInterface::AddPulse(const std::vector<float> &pulse, const int ch)
