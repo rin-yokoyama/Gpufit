@@ -32,7 +32,7 @@ int PoolFitInterface::AddPulse(const std::vector<float> &pulse, const int ch)
     }
     else
     {
-        std::memcpy(&data_[n_added_ * n_points_], pulse.data()+fit_range_[0], n_points_ * sizeof(float));
+        std::memcpy(&data_[n_added_ * n_points_], ((void*)pulse.data())+sizeof(float)*fit_range_[0], n_points_ * sizeof(float));
     }
     CalculateInitialParameters(pulse, ch);
     ++n_added_;
