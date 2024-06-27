@@ -10,6 +10,7 @@ add_library( GpufitInterface SHARED
     FitThreadPool.cpp
     PulseFitInterface.cpp
     BGFitInterface.cpp
+    GaussFitInterface.cpp
     ${PROJECT_SOURCE_DIR}/tests/utils.h
     ${PROJECT_SOURCE_DIR}/tests/utils.cpp
 )
